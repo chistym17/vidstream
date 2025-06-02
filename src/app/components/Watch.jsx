@@ -1,9 +1,12 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Clock, CheckCircle, Lock, Users, Star, ThumbsUp, Share2, Bookmark, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Clock, CheckCircle, Lock, Users, Star, ThumbsUp, Share2, Bookmark, ChevronDown, ChevronUp, LogOut } from 'lucide-react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import 'videojs-contrib-quality-levels';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import Login from './Login';
 
 // Mock Framer Motion for this environment
 const motion = {
@@ -101,45 +104,73 @@ const courseInfo = {
 export default function EduStreamWatchPage() {
     const [currentVideo, setCurrentVideo] = useState(mockVideos[0]);
     const [isPlaylistExpanded, setIsPlaylistExpanded] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [authToken, setAuthToken] = useState(null);
     const videoRef = useRef(null);
     const playerRef = useRef(null);
+    const router = useRouter();
 
-    // Initialize Video.js
+    // Check authentication on mount
     useEffect(() => {
-        if (!playerRef.current && videoRef.current) {
+        const token = localStorage.getItem('authToken');
+        const user = localStorage.getItem('user');
+        
+        if (token && user) {
+            setAuthToken(token);
+            setIsAuthenticated(true);
+        }
+    }, []);
+
+    // Initialize Video.js with token
+    useEffect(() => {
+        if (!playerRef.current && videoRef.current && isAuthenticated && currentVideo.isHls) {
             const videoElement = videoRef.current;
             
-            // Only initialize Video.js for HLS streams
-            if (currentVideo.isHls) {
-                const player = videojs(videoElement, {
-                    controls: true,
-                    responsive: true,
-                    fluid: true,
-                    sources: [{
-                        src: currentVideo.videoUrl,
-                        type: 'application/x-mpegURL'
-                    }],
-                    html5: {
-                        hls: {
-                            enableLowInitialPlaylist: true,
-                            smoothQualityChange: true,
-                            overrideNative: true
-                        }
+            const player = videojs(videoElement, {
+                controls: true,
+                responsive: true,
+                fluid: true,
+                sources: [{
+                    src: `${currentVideo.videoUrl}?token=${authToken}`,
+                    type: 'application/x-mpegURL'
+                }],
+                html5: {
+                    hls: {
+                        enableLowInitialPlaylist: true,
+                        smoothQualityChange: true,
+                        overrideNative: true
                     }
-                });
+                }
+            });
 
-                playerRef.current = player;
+            playerRef.current = player;
 
-                // Cleanup
-                return () => {
-                    if (playerRef.current) {
-                        playerRef.current.dispose();
-                        playerRef.current = null;
-                    }
-                };
-            }
+            return () => {
+                if (playerRef.current) {
+                    playerRef.current.dispose();
+                    playerRef.current = null;
+                }
+            };
         }
-    }, [currentVideo]);
+    }, [currentVideo, isAuthenticated, authToken]);
+
+    const handleLoginSuccess = (token) => {
+        setAuthToken(token);
+        setIsAuthenticated(true);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        setAuthToken(null);
+        router.push('/');
+        toast.success('Logged out successfully');
+    };
+
+    if (!isAuthenticated) {
+        return <Login onLoginSuccess={handleLoginSuccess} />;
+    }
 
     const handleVideoSelect = (video) => {
         if (!video.isLocked) {
@@ -153,6 +184,19 @@ export default function EduStreamWatchPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 pt-16">
+            {/* Add Logout Button */}
+            <div className="absolute top-4 right-4">
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleLogout}
+                    className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                </motion.button>
+            </div>
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
