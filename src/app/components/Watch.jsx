@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import Login from './Login';
 
-// Mock Framer Motion for this environment
 const motion = {
     div: ({ children, initial, animate, transition, whileHover, className, ...props }) => (
         <div className={className} {...props}>{children}</div>
@@ -18,18 +17,18 @@ const motion = {
     )
 };
 
-// Mock video data
 const mockVideos = [
     {
         id: 1,
         title: "Sunshine Nature",
         duration: "12:45",
         thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=300&h=200&fit=crop",
-        videoUrl: "http://localhost:8000/static/sample1/master.m3u8",
+        videoUrl: "http://localhost:8000/stream",
         isCompleted: true,
         isLocked: false,
         description: "Learn the fundamentals of React Hooks and how they revolutionize functional components.",
-        isHls: true // Add flag to identify HLS stream
+        isHls: true,
+        requiresAuth: true
     },
     {
         id: 2,
@@ -110,7 +109,6 @@ export default function EduStreamWatchPage() {
     const playerRef = useRef(null);
     const router = useRouter();
 
-    // Check authentication on mount
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const user = localStorage.getItem('user');
@@ -121,25 +119,62 @@ export default function EduStreamWatchPage() {
         }
     }, []);
 
-    // Initialize Video.js with token
     useEffect(() => {
         if (!playerRef.current && videoRef.current && isAuthenticated && currentVideo.isHls) {
             const videoElement = videoRef.current;
+            let toastShown = false;
             
+            const preventContextMenu = (e) => {
+                if (e.target === videoElement || e.target === playerRef.current?.el()) {
+                    e.preventDefault();
+                    if (!toastShown) {
+                        toast('⚠️ Right-click is disabled for content protection', {
+                            id: 'right-click-warning',
+                            duration: 2000
+                        });
+                        toastShown = true;
+                        setTimeout(() => {
+                            toastShown = false;
+                        }, 2000);
+                    }
+                    return false;
+                }
+            };
+
+            videoElement.addEventListener('contextmenu', preventContextMenu);
+
             const player = videojs(videoElement, {
                 controls: true,
                 responsive: true,
                 fluid: true,
                 sources: [{
-                    src: `${currentVideo.videoUrl}?token=${authToken}`,
+                    src: currentVideo.requiresAuth 
+                        ? `${currentVideo.videoUrl}?token=${authToken}`
+                        : currentVideo.videoUrl,
                     type: 'application/x-mpegURL'
                 }],
                 html5: {
                     hls: {
                         enableLowInitialPlaylist: true,
                         smoothQualityChange: true,
-                        overrideNative: true
+                        overrideNative: true,
+                        xhrSetup: function(xhr) {
+                            if (currentVideo.requiresAuth) {
+                                xhr.setRequestHeader('Authorization', `Bearer ${authToken}`);
+                            }
+                        }
                     }
+                }
+            });
+
+            const playerElement = player.el();
+            playerElement.addEventListener('contextmenu', preventContextMenu);
+
+            player.on('error', (error) => {
+                console.error('Video.js error:', error);
+                if (error.code() === 4) {
+                    toast.error('Error loading video. Please try logging in again.');
+                    handleLogout();
                 }
             });
 
@@ -147,6 +182,9 @@ export default function EduStreamWatchPage() {
 
             return () => {
                 if (playerRef.current) {
+                    videoElement.removeEventListener('contextmenu', preventContextMenu);
+                    playerElement.removeEventListener('contextmenu', preventContextMenu);
+                    
                     playerRef.current.dispose();
                     playerRef.current = null;
                 }
@@ -184,6 +222,30 @@ export default function EduStreamWatchPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 pt-16">
+            {/* Add noscript warning */}
+            <noscript>
+                <div className="fixed inset-0 bg-red-50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-md text-center">
+                        <h2 className="text-2xl font-bold text-red-600 mb-4">
+                            JavaScript Required
+                        </h2>
+                        <p className="text-gray-700 mb-4">
+                            This video player requires JavaScript to be enabled for secure playback.
+                            Please enable JavaScript in your browser settings to continue.
+                        </p>
+                        <div className="text-sm text-gray-500">
+                            <p>Why is JavaScript required?</p>
+                            <ul className="list-disc list-inside mt-2 text-left">
+                                <li>Secure video streaming</li>
+                                <li>Content protection</li>
+                                <li>Quality selection</li>
+                                <li>Playback controls</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </noscript>
+
             {/* Add Logout Button */}
             <div className="absolute top-4 right-4">
                 <motion.button
@@ -208,7 +270,7 @@ export default function EduStreamWatchPage() {
                             transition={{ duration: 0.6 }}
                             className="bg-white rounded-2xl shadow-lg overflow-hidden"
                         >
-                            {/* Video Player */}
+                            {/* Video Player - only prevent right-click on the video element itself */}
                             <div className="relative aspect-video bg-black">
                                 {currentVideo.isHls ? (
                                     <div data-vjs-player>
