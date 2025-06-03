@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { Mail, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
 
-// Mock user data
 const MOCK_USERS = [
     { id: 1, email: 'demo@example.com', password: 'demo123', name: 'Demo User' },
     { id: 2, email: 'premium@example.com', password: 'premium123', name: 'Premium User' }
@@ -26,20 +25,16 @@ export default function Login({ onLoginSuccess }) {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Mock authentication
         const user = MOCK_USERS.find(u => u.email === email && u.password === password);
 
         if (user) {
             try {
-                // Get token from backend
-                const response = await fetch('http://localhost:8000/get-token?video_id=sample1');
+                const response = await fetch('https://vidstream-backend-ft8i.onrender.com/get-token?video_id=sample1');
                 const data = await response.json();
 
                 if (data.token) {
-                    // Store token and user info
                     localStorage.setItem('authToken', data.token);
                     localStorage.setItem('user', JSON.stringify({
                         id: user.id,
@@ -86,7 +81,6 @@ export default function Login({ onLoginSuccess }) {
                     </p>
                 </div>
 
-                {/* Quick Login Buttons */}
                 <div className="grid grid-cols-2 gap-4">
                     {MOCK_USERS.map((user) => (
                         <motion.button

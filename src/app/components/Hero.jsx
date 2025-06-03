@@ -1,7 +1,7 @@
 import React from 'react';
 import { Play, Users, BookOpen, Star, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
-// Mock Framer Motion for this environment
 const motion = {
     div: ({ children, initial, animate, transition, whileHover, className, ...props }) => (
         <div className={className} {...props}>{children}</div>
@@ -18,9 +18,9 @@ const motion = {
 };
 
 export default function Hero() {
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-indigo-100 relative overflow-hidden">
-            {/* Animated background elements */}
             <div className="absolute inset-0 overflow-hidden">
                 <motion.div
                     className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-blue-200/30 to-indigo-300/30 rounded-full blur-3xl"
@@ -51,7 +51,6 @@ export default function Hero() {
             <div className="relative z-10 container mx-auto px-6 py-20">
                 <div className="flex flex-col lg:flex-row items-center justify-between min-h-[80vh]">
 
-                    {/* Left Content */}
                     <div className="lg:w-1/2 mb-12 lg:mb-0">
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
@@ -91,24 +90,28 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 0.6 }}
                             className="flex flex-col sm:flex-row gap-4 mb-8"
                         >
-                            <motion.button
-                                whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)" }}
-                                whileTap={{ scale: 0.95 }}
-                                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
-                            >
-                                <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                                Start Learning Free
-                                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                            </motion.button>
+                            <Link href="/watch" className="w-full sm:w-auto">
+                                <motion.button
+                                    whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)" }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="group w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                                >
+                                    <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                                    Start Watching
+                                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                                </motion.button>
+                            </Link>
 
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
-                            >
-                                <BookOpen className="w-5 h-5 mr-2" />
-                                Browse Courses
-                            </motion.button>
+                            <Link href="/watch" className="w-full sm:w-auto">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="w-full px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
+                                >
+                                    <BookOpen className="w-5 h-5 mr-2" />
+                                    Browse Courses
+                                </motion.button>
+                            </Link>
                         </motion.div>
 
                         <motion.div
@@ -136,10 +139,8 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 0.4 }}
                             className="relative"
                         >
-                            {/* Main video container */}
                             <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-500">
                                 <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 relative overflow-hidden">
-                                    {/* Video placeholder with play button */}
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <motion.button
                                             whileHover={{ scale: 1.1 }}
@@ -150,7 +151,6 @@ export default function Hero() {
                                         </motion.button>
                                     </div>
 
-                                    {/* Floating elements */}
                                     <motion.div
                                         animate={{ y: [0, -10, 0] }}
                                         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -169,7 +169,6 @@ export default function Hero() {
                                 </div>
                             </div>
 
-                            {/* Floating course cards */}
                             <motion.div
                                 animate={{ y: [0, -8, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}

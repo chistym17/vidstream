@@ -23,7 +23,7 @@ const mockVideos = [
         title: "Sunshine Nature",
         duration: "12:45",
         thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=300&h=200&fit=crop",
-        videoUrl: "http://localhost:8000/stream",
+        videoUrl: "https://vidstream-backend-ft8i.onrender.com/stream",
         isCompleted: true,
         isLocked: false,
         description: "Learn the fundamentals of React Hooks and how they revolutionize functional components.",
@@ -260,8 +260,7 @@ export default function EduStreamWatchPage() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     {/* Video Player Section */}
                     <div className="lg:col-span-3">
                         <motion.div
@@ -357,12 +356,12 @@ export default function EduStreamWatchPage() {
                     </div>
 
                     {/* Sidebar with Playlist */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-2">
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="bg-white rounded-2xl shadow-lg overflow-hidden sticky top-24"
+                            className="bg-white rounded-2xl shadow-lg overflow-hidden sticky top-24 h-[calc(100vh-8rem)]"
                         >
                             {/* Course Header */}
                             <div className="p-6 border-b border-gray-100">
@@ -406,7 +405,7 @@ export default function EduStreamWatchPage() {
 
                             {/* Video Playlist */}
                             {isPlaylistExpanded && (
-                                <div className="max-h-96 overflow-y-auto">
+                                <div className="h-[calc(100%-12rem)] overflow-y-auto">
                                     {mockVideos.map((video, index) => (
                                         <motion.div
                                             key={video.id}
@@ -415,39 +414,39 @@ export default function EduStreamWatchPage() {
                                             className={`p-4 border-b border-gray-100 cursor-pointer transition-all duration-200 ${currentVideo.id === video.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''
                                                 } ${video.isLocked ? 'opacity-60 cursor-not-allowed' : 'hover:bg-gray-50'}`}
                                         >
-                                            <div className="flex items-start space-x-3">
+                                            <div className="flex items-start space-x-4">
                                                 {/* Thumbnail */}
                                                 <div className="relative flex-shrink-0">
                                                     <img
                                                         src={video.thumbnail}
                                                         alt={video.title}
-                                                        className="w-16 h-12 object-cover rounded-lg"
+                                                        className="w-24 h-16 object-cover rounded-lg"
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center">
                                                         {video.isLocked ? (
-                                                            <Lock className="w-4 h-4 text-white bg-black bg-opacity-50 rounded-full p-1" />
+                                                            <Lock className="w-5 h-5 text-white bg-black bg-opacity-50 rounded-full p-1" />
                                                         ) : video.isCompleted ? (
-                                                            <CheckCircle className="w-5 h-5 text-green-500 bg-white rounded-full" fill="currentColor" />
+                                                            <CheckCircle className="w-6 h-6 text-green-500 bg-white rounded-full" fill="currentColor" />
                                                         ) : (
-                                                            <Play className="w-4 h-4 text-white bg-black bg-opacity-50 rounded-full p-1" fill="currentColor" />
+                                                            <Play className="w-5 h-5 text-white bg-black bg-opacity-50 rounded-full p-1" fill="currentColor" />
                                                         )}
                                                     </div>
                                                 </div>
 
                                                 {/* Video Info */}
                                                 <div className="flex-1 min-w-0">
-                                                    <h3 className={`text-sm font-medium mb-1 line-clamp-2 ${currentVideo.id === video.id ? 'text-blue-600' : 'text-gray-900'
+                                                    <h3 className={`text-base font-medium mb-1 line-clamp-2 ${currentVideo.id === video.id ? 'text-blue-600' : 'text-gray-900'
                                                         }`}>
                                                         {index + 1}. {video.title}
                                                     </h3>
-                                                    <div className="flex items-center text-xs text-gray-500">
-                                                        <Clock className="w-3 h-3 mr-1" />
+                                                    <div className="flex items-center text-sm text-gray-500">
+                                                        <Clock className="w-4 h-4 mr-1" />
                                                         {video.duration}
                                                         {video.isCompleted && (
-                                                            <CheckCircle className="w-3 h-3 ml-2 text-green-500" fill="currentColor" />
+                                                            <CheckCircle className="w-4 h-4 ml-2 text-green-500" fill="currentColor" />
                                                         )}
                                                         {video.isLocked && (
-                                                            <Lock className="w-3 h-3 ml-2 text-gray-400" />
+                                                            <Lock className="w-4 h-4 ml-2 text-gray-400" />
                                                         )}
                                                     </div>
                                                 </div>
