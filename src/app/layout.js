@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';  
+import { AuthProvider } from './context/AuthContext';
 
 
 export const metadata = {
@@ -14,7 +15,9 @@ export default function RootLayout({ children }) {
       <body
         className={` antialiased`}
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Toaster position="top-right" />
       </body>
     </html>
