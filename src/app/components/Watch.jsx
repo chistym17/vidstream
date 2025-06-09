@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Clock, CheckCircle, Lock, Users, Star, ThumbsUp, Share2, Bookmark, ChevronDown, ChevronUp, LogOut } from 'lucide-react';
+import { Play, Clock, CheckCircle, Lock, Users, Star, ThumbsUp, Share2, Bookmark, ChevronDown, ChevronUp, LogOut, ArrowRight } from 'lucide-react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import 'videojs-contrib-quality-levels';
@@ -458,6 +458,34 @@ export default function EduStreamWatchPage() {
                         </motion.div>
                     </div>
                 </div>
+            </div>
+
+            {/* New Section: All Videos */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-16">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-12 shadow-lg"
+                >
+                    <div className="text-center max-w-3xl mx-auto">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                            Start Learning Today
+                        </h2>
+                        <p className="text-lg text-gray-600 mb-8">
+                            Access our complete library of high-quality video courses. Join thousands of students who are already learning and growing with EduStream.
+                        </p>
+                        <motion.button
+                            whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)" }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => window.location.href = '/pricing'}
+                            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center mx-auto"
+                        >
+                            Join Us Now
+                            <ArrowRight className="w-5 h-5 ml-2" />
+                        </motion.button>
+                    </div>
+                </motion.div>
             </div>
         </div>
     );

@@ -40,8 +40,8 @@ export default function EduStreamNavbar() {
                 { name: 'Study Groups', href: '#', icon: Users },
             ]
         },
-        { name: 'Pricing', href: '#' },
-        { name: 'About', href: '#' },
+        { name: 'Pricing', href: '/pricing' },
+        { name: 'Start Learning', href: '/watch' },
     ];
 
     return (
